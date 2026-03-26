@@ -1,37 +1,579 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; max-width: 100%; }
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", Arial, sans-serif; line-height: 1.6; }
-    img { max-width: 100%; height: auto; display: block; }
-    .container { width: 1920px; margin: 0 auto; padding: 16px; }
-    nav a { margin-right: 12px; text-decoration: none; }
-    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
-    .col-12 { grid-column: span 12; }
-    @media (min-width: 768px) { .col-md-6 { grid-column: span 6; } }
-    .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkey D. Luffy · Frontend Captain | 航向偉大航道</title>
+    <meta name="description" content="這是 Monkey D. Luffy 的個人品牌網站，紀錄了從東海出發，追尋 One Piece 的冒險歷程、戰鬥技能與夥伴情誼，展現自由、夢想與夥伴的信念。">
+    
+    <style>
+        /* CSS:BASE-START */
+        :root {
+            --primary-color: #00e5ff; /* 更明亮的青色 */
+            --primary-hover: #00b8d4;
+            --accent-color: #ffd600; /* 更明亮的黃色 */
+            --danger-color: #ff3d00; /* 更鮮豔的紅色 */
+            --bg-dark: #1e293b; /* 基礎背景：Slate 800 */
+            --bg-light: #334155; /* 較亮的背景：Slate 700 */
+            --bg-card: #475569; /* 卡片背景：Slate 600 */
+            --text-main: #ffffff; 
+            --text-muted: #e2e8f0; /* 調亮次要文字：Slate 200 */
+            --container-width: 1100px;
+            --header-height: 70px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* 確保全站絕對無 X 軸捲動 */
+        .page {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 15px; /* 稍微減少手機版邊距 */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            transition: transform 0.3s;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary-color);
+            padding: 10px 0; /* 手機版不限高度，用 padding 撐開 */
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column; /* 手機版預設垂直堆疊防止跑版 */
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: var(--accent-color);
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px var(--danger-color);
+            text-align: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap; /* 允許連結自動折行 */
+            justify-content: center;
+            gap: 8px; 
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: all 0.2s;
+            padding: 5px 8px;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .section {
+            padding: 50px 0;
+            scroll-margin-top: 100px; /* 考慮到手機版變高的 Header */
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 900;
+            text-shadow: 3px 3px 0px var(--danger-color);
+            word-break: keep-all;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 800;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--danger-color);
+            color: var(--text-main);
+            box-shadow: 0 4px 15px rgba(255, 61, 0, 0.5);
+            border: 2px solid #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            background-color: #ff5722;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            margin-top: 10px; /* 手機版按鈕上下排列 */
+        }
+
+        .site-footer {
+            padding: 50px 0;
+            text-align: center;
+            background-color: #0f172a;
+            color: var(--text-muted);
+            border-top: 3px solid var(--danger-color);
+        }
+
+        @keyframes pulse-dream {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); text-shadow: 0 0 15px var(--accent-color); }
+        }
+
+        .animated-dream {
+            display: inline-block;
+            animation: pulse-dream 2.5s ease-in-out infinite;
+            font-weight: 900;
+        }
+        /* CSS:BASE-END */
+
+        /* CSS:HERO-START */
+        .section-hero {
+            min-height: calc(100vh - 100px);
+            display: flex;
+            align-items: center;
+            text-align: center;
+            background-image: linear-gradient(rgba(30, 41, 59, 0.4), rgba(30, 41, 59, 0.7)), url('https://images.unsplash.com/photo-1505144808419-1957a94ca61e?auto=format&fit=crop&q=80&w=1600');
+            background-size: cover;
+            background-position: center;
+            background-attachment: scroll; /* 手機版關閉 fixed 以提升效能與減少跑版 */
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 18px;
+            background-color: var(--danger-color);
+            border: 2px solid #fff;
+            color: #fff;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .hero-title {
+            font-size: 2.2rem; /* 手機版極小化標題 */
+            margin-bottom: 20px;
+            line-height: 1.2;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 3px 3px 0px var(--primary-color);
+            word-wrap: break-word;
+        }
+
+        .hero-desc {
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+        /* CSS:HERO-END */
+
+        /* CSS:ABOUT-START */
+        .section-about {
+            background-color: var(--bg-light);
+        }
+
+        .about-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+
+        /* 改用 Flex 佈局 */
+        .about-highlight {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 6px solid var(--primary-color);
+        }
+
+        .highlight-icon {
+            font-size: 2rem;
+        }
+
+        .about-image img {
+            border: 6px solid var(--bg-card);
+        }
+        /* CSS:ABOUT-END */
+
+        /* CSS:SKILLS-START */
+        .section-skills {
+            background-color: var(--bg-dark);
+        }
+
+        /* 改用 Flex 佈局 */
+        .skill-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .skill-item {
+            background-color: var(--bg-card);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .skill-item:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-color);
+            background-color: #4b5563;
+        }
+
+        .skill-item h3 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+            text-shadow: 2px 2px 0px var(--danger-color);
+        }
+        /* CSS:SKILLS-END */
+
+        /* CSS:PROJECTS-START */
+        .section-projects {
+            background-color: var(--bg-light);
+        }
+
+        /* 改用 Flex 佈局 */
+        .project-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .project-card {
+            background-color: var(--bg-card);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .project-image-box {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .project-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-info {
+            padding: 20px;
+        }
+        /* CSS:PROJECTS-END */
+
+        /* CSS:CONTACT-START */
+        .contact-form {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            background-color: #1e293b;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-main);
+            border-radius: 12px;
+        }
+
+        .contact-info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        /* CSS:CONTACT-END */
+
+        /* CSS:RWD-START */
+        @media (min-width: 768px) {
+            .site-header { padding: 0; height: var(--header-height); }
+            .nav { flex-direction: row; justify-content: space-between; height: 100%; }
+            .nav-logo { font-size: 1.4rem; text-align: left; }
+            .nav-menu { gap: 20px; }
+            .nav-link { font-size: 1rem; padding: 5px 10px; }
+            
+            .section { padding: 80px 0; scroll-margin-top: var(--header-height); }
+            .section-title { font-size: 2.8rem; }
+
+            .hero-title { font-size: 4.5rem; }
+            .hero-desc { font-size: 1.4rem; }
+            .btn-secondary { margin-top: 0; margin-left: 15px; }
+
+            .section-about .about-wrapper { flex-direction: row-reverse; text-align: left; }
+            
+            /* Flex 欄位控制 */
+            .about-highlight { flex-direction: row; flex-wrap: wrap; }
+            .highlight-item { flex: 1 1 calc(50% - 15px); }
+
+            .skill-grid { flex-direction: row; flex-wrap: wrap; gap: 30px; }
+            .skill-item { flex: 1 1 calc(50% - 30px); }
+
+            .project-grid { flex-direction: row; flex-wrap: wrap; gap: 35px; }
+            .project-card { flex: 1 1 calc(50% - 35px); }
+
+            .contact-info-list { flex-direction: row; justify-content: center; gap: 40px; }
+        }
+
+        @media (min-width: 1024px) {
+            /* 三欄位 Flex 控制 */
+            .skill-item { flex: 1 1 calc(33.33% - 30px); }
+        }
+        /* CSS:RWD-END */
+    </style>
 </head>
 <body>
-  <header class="container" role="banner">
-    <nav aria-label="主選單">
-      <a href="#about">關於我</a>
-      <a href="#projects">作品集</a>
-      <a href="https://example.com/blog">技術部落格</a>
-      <a href="mailto:me@example.com">聯絡我</a>
-    </nav>
-    <h1>你好，我是小明：前端工程師新手之路</h1>
-    <h1>你好，我是小明：前端工程師新手之路</h1>
-    <p>歡迎來到我的個人網站！這裡整理了學習紀錄、Side Project 與實作心得。</p>
-  </header>
 
-  <footer class="container" role="contentinfo">
-    <p>© 2025 My Portfolio · <a href="#">GitHub</a></p>
-    <img src="https://source.unsplash.com/600x200/?technology,abstract" alt="">
-  </footer>
+    <div class="page">
+        <header class="site-header">
+            <div class="container">
+                <nav class="nav">
+                    <a href="#hero" class="nav-logo">LUFFY · CAPTAIN</a>
+                    <ul class="nav-menu">
+                        <li><a href="#about" class="nav-link">關於我們</a></li>
+                        <li><a href="#skills" class="nav-link">戰鬥能力</a></li>
+                        <li><a href="#projects" class="nav-link">航海紀錄</a></li>
+                        <li><a href="#contact" class="nav-link">加入夥伴</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <!-- SECTION:HERO-START -->
+            <section id="hero" class="section section-hero">
+                <div class="container">
+                    <div class="hero-content">
+                        <span class="hero-badge animated-dream">夢想是不會終結的！</span>
+                        <h1 class="hero-title">啟航吧！<br>邁向偉大航道。</h1>
+                        <p class="hero-desc">這不是冒險，而是一場追尋夢想與自由的旅程。與夥伴並肩作戰，一步步奪下 One Piece！</p>
+                        <div class="hero-actions">
+                            <a href="#contact" class="btn btn-primary">加入草帽一夥</a>
+                            <a href="#projects" class="btn btn-secondary">探索航道</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION:HERO-END -->
+
+            <!-- SECTION:ABOUT-START -->
+            <section id="about" class="section section-about">
+                <div class="container">
+                    <h2 id="about-heading" class="section-title">關於草帽海賊團</h2>
+                    <div class="about-wrapper">
+                        <div class="about-text">
+                            <p>我們是一群來自不同地方的夥伴，因夢想而相遇。無論是成為世界第一劍豪、找到 All Blue，還是繪製世界地圖，每個人都懷抱著自己的目標。</p>
+                            <div class="about-highlight">
+                                <div class="highlight-item">
+                                    <span class="highlight-icon">🍗</span>
+                                    <div>
+                                        <strong>自由靈魂</strong>
+                                        <p>大口吃肉，盡情冒險！</p>
+                                    </div>
+                                </div>
+                                <div class="highlight-item">
+                                    <span class="highlight-icon">🔥</span>
+                                    <div>
+                                        <strong>熱血信念</strong>
+                                        <p>守護夥伴，永不退縮。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="about-image">
+                            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=1200" alt="在大海上冒險航行的木造帆船意象圖">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION:ABOUT-END -->
+
+            <!-- SECTION:SKILLS-START -->
+            <section id="skills" class="section section-skills">
+                <div class="container">
+                    <h2 id="skills-heading" class="section-title">夥伴們的核心能力</h2>
+                    <div class="skill-grid">
+                        <div class="skill-item">
+                            <h3>橡膠果實之力</h3>
+                            <p>自由伸縮的身體，突破極限的戰鬥方式，擁有二檔、三檔直到五檔的神之姿態。</p>
+                        </div>
+                        <div class="skill-item">
+                            <h3>三刀流劍術</h3>
+                            <p>極致劍技「大千世界」，斬斷一切阻礙，是船長最信任的左膀右臂。</p>
+                        </div>
+                        <div class="skill-item">
+                            <h3>航海術與天候</h3>
+                            <p>精準掌握氣象，甚至能將天候化為武器，帶領夥伴穿越任何風暴。</p>
+                        </div>
+                        <div class="skill-item">
+                            <h3>狙擊與神射</h3>
+                            <p>百發百中！關鍵時刻總是能從最遠處逆轉戰局的神之狙擊手。</p>
+                        </div>
+                        <div class="skill-item">
+                            <h3>海賊廚藝</h3>
+                            <p>在任何環境下都能端出神級料理，補足夥伴體力的絕對後勤。</p>
+                        </div>
+                        <div class="skill-item">
+                            <h3>萬能醫生</h3>
+                            <p>可愛但強大！掌握最尖端醫術，是團隊不可或缺的藍鼻子夥伴。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION:SKILLS-END -->
+
+            <!-- SECTION:PROJECTS-START -->
+            <section id="projects" class="section section-projects">
+                <div class="container">
+                    <h2 id="projects-heading" class="section-title">我們的航海紀錄</h2>
+                    <div class="project-grid">
+                        <article class="project-card">
+                            <div class="project-image-box">
+                                <img src="https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?auto=format&fit=crop&q=80&w=800" alt="阿拉巴斯坦的金色沙漠">
+                            </div>
+                            <div class="project-info">
+                                <span class="project-tag">GRAND LINE</span>
+                                <h3>阿拉巴斯坦之戰</h3>
+                                <p>推翻王國危機，在黃沙漫天的戰場上，守護薇薇公主的眼淚與國家。</p>
+                            </div>
+                        </article>
+                        <article class="project-card">
+                            <div class="project-image-box">
+                                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=800" alt="司法島決戰氛圍圖">
+                            </div>
+                            <div class="project-info">
+                                <span class="project-tag">ENIES LOBBY</span>
+                                <h3>司法島突襲</h3>
+                                <p>為了對世界政府宣告：羅賓是我們的夥伴！與 CP9 展開生死決鬥。</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+            <!-- SECTION:PROJECTS-END -->
+
+            <!-- SECTION:CONTACT-START -->
+            <section id="contact" class="section section-contact">
+                <div class="container">
+                    <h2 id="contact-heading" class="section-title">準備好出海了嗎？</h2>
+                    <div class="contact-form">
+                        <form action="#contact">
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label for="pirate-name" style="display:block; margin-bottom:8px; font-weight:900;">你的海賊名號</label>
+                                <input type="text" id="pirate-name" class="form-control" placeholder="例如：索隆">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label for="position" style="display:block; margin-bottom:8px; font-weight:900;">想加入的職位</label>
+                                <select id="position" class="form-control">
+                                    <option value="navigator">航海士</option>
+                                    <option value="chef">廚師</option>
+                                    <option value="doctor">船醫</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-submit" style="width:100%;">正式入團申請</button>
+                        </form>
+                    </div>
+                    
+                    <ul class="contact-info-list">
+                        <li>📍 停泊地：新世界某座冒險之島</li>
+                        <li>📧 懸賞信箱：<a href="mailto:wanted@onepiece.com" style="color:var(--primary-color); text-decoration:none;">wanted@onepiece.com</a></li>
+                    </ul>
+                </div>
+            </section>
+            <!-- SECTION:CONTACT-END -->
+        </main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <p>&copy; 2024 Straw Hat Pirates · Captain Luffy. All Rights Reserved.</p>
+                <p class="footer-slogan animated-dream">夢想是不會終結的！DREAM NEVER DIES!</p>
+            </div>
+        </footer>
+    </div>
+
 </body>
 </html>
